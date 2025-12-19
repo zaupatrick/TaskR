@@ -10,8 +10,8 @@
 <hr />
 
 <div class="btn-group">
-    <a href="/FreeUser/TodoDetails?TodoId=@Model.TodoId" class="btn btn-primary">Zurück zu Details</a> @* Hier gehts als Model; siehe CreateTask.cshtml *@
     <a href="/FreeUser/Index" class="btn btn-primary">Zurück zur ToDo-Liste</a>
+    <a href="/FreeUser/TodoDetails?TodoId=@Model.TodoId" class="btn btn-primary">Zurück zu Details</a> @* Hier gehts als Model; siehe CreateTask.cshtml *@
 </div>
 <br />
 <br />
@@ -32,7 +32,7 @@
         <td>
         <div class="row">
             <div class="col-md-6" style="background-color:@colorString.ToString()" >
-                <form asp-action="EditTask" method="post">
+                <form asp-action="EditTask" method="post" id="editTaskForm" onsubmit="=fixDeadline()">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="AufgabeId" />
                     <div class="form-group">
@@ -67,19 +67,14 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Deadline" class="control-label"></label>
-                        <input type="datetime-local" class="form-control" id="deadline" value="@Model.Deadline?.ToString("yyyy-MM-ddTHH:mm")" /> @*wichtig!!! datetime-local*@
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function () {
-                                    document.getElementById("submitButton").addEventListener("click", function () {
-                                    const v = document.getElementById("deadline");
-                                    console.log("INIT value:", v.value);
-                                    console.log("INIT valueAsDate:", v.valueAsDate);
-                                });
-                                });
-                            </script>
+                        @* <input type="datetime-local" class="form-control" id="deadline" value="@Model.Deadline?.ToString("yyyy-MM-ddTHH:mm")" /> wichtig!!! datetime-local *@
+                            <div class="input-group">
+                                <div style="display: flex; gap: 5px;">
+                                    <input type="date" id="datePart" class="form-control" value="@Model.Deadline?.ToString("yyyy-MM-dd")">
+                                    <input type="time" id="timePart" class="form-control" value="@Model.Deadline?.ToString("HH:mm")">
+                                </div>
+                            </div>
                         <input type="hidden" id="Deadline" name="Deadline" />
-                        @* @Html.TextBoxFor(m => m.Deadline, new { type = "datetime-local", id = "deadline" }) *@
-                        @* @Html.TextBoxFor(m => m.Deadline, new { type = "datetime-local", value = Model.Deadline?.ToString("yyyy-MM-ddTHH:mm") }) *@
                         <span asp-validation-for="Deadline" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -151,43 +146,30 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.getElementById('datePart');
+        const timeInput = document.getElementById('timePart');
+        const hidden = document.getElementById('Deadline');
 
-        document.getElementById("submitButton").addEventListener("click", function () {
+        document.getElementById("submitButton").addEventListener("click", function (e) {
+            const dateVal = dateInput.value; // "YYYY-MM-DD" oder ""
+            const timeVal = timeInput.value; // "HH:mm" oder ""
 
-            const visible = document.getElementById('deadline');
-            console.log("INIT value:", v.value);
-            console.log("INIT valueAsDate:", v.valueAsDate);
-            const hidden = document.getElementById('Deadline'); // <-- jetzt korrekt!
+            if (dateVal) {
+                // Wenn Datum da, aber Zeit leer -> nutze 00:00
+                const finalTime = timeVal ? timeVal : "00:00";
 
-            let val = visible.value;
+                // Format für datetime-local im Controller: YYYY-MM-DDTHH:mm
+                hidden.value = dateVal + "T" + finalTime;
 
-            if (!val) {
-                let d = visible.valueAsDate;
-                alert('nurDate')
-
-                if (d) {
-                    d.setHours(0, 0, 0, 0);
-
-                    const year = d.getFullYear();
-                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                    const day = String(d.getDate()).padStart(2, '0');
-
-                    val = `${year}-${month}-${day}T00:00`;
-                    hidden.value = val;
-                    alert('Zeit gesetzt')
-                    return;
-                }
-
+                //alert("Gespeichert: " + hidden.value);
+            } else {
+                // Feld ist komplett leer (Nullable)
                 hidden.value = "";
-                alert('leer')
-                return;
+                //alert("Feld ist leer (NULL)");
             }
-            alert('nix')
-            hidden.value = val;
         });
     });
 </script>
-
 
 @if (TempData["Message"] != null)
 {

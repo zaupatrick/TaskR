@@ -572,3 +572,5 @@ C:\Users\zaupatrick\csproj\TaskR\obj\Debug\net8.0\refint\TaskR.dll
 C:\Users\zaupatrick\csproj\TaskR\obj\Debug\net8.0\TaskR.pdb
 C:\Users\zaupatrick\csproj\TaskR\obj\Debug\net8.0\TaskR.genruntimeconfig.cache
 C:\Users\zaupatrick\csproj\TaskR\obj\Debug\net8.0\ref\TaskR.dll
+C:\Users\zaupatrick\csproj\TaskR\obj\Debug\net8.0\TaskR.sourcelink.json
+C:\Users\zaupatrick\csproj\TaskR\obj\Debug\net8.0\swae.build.ex.cache
