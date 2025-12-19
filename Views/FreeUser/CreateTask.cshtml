@@ -36,11 +36,11 @@
                 <label asp-for="ErledigtDatum" class="control-label">(Erledigt am)</label>
                 <div class="input-group">
                     <div style="display:flex; gap:5px">
-                        <input type="date" id="erlDat" class="form-control" value="@Model.ErledigtDatum?.ToString("yyyy-MM-dd")" />
-                        <input type="time" id="erlTim" class="form-control" value="@Model.ErledigtDatum?.ToString("HH:mm")" />
+                        <input type="date" id="erledigtDateInput" class="form-control" />
+                        <input type="time" id="erledigtTimeInput" class="form-control" />
                     </div>
                 </div>
-                <input type="hidden" name="ErledigtDatum" id="ErledigtDatum" />
+                <input type="hidden" id="ErledigtDatum" name="ErledigtDatum" />
                 @* <input asp-for="ErledigtDatum" type="datetime-local" class="form-control" /> *@
                 <span asp-validation-for="ErledigtDatum" class="text-danger"></span>
             </div>
@@ -49,8 +49,8 @@
                 @* <input type="datetime-local" class="form-control" id="deadline" value="@Model.Deadline?.ToString("yyyy-MM-ddTHH:mm")" /> wichtig!!! datetime-local *@
                 <div class="input-group">
                     <div style="display: flex; gap: 5px;">
-                        <input type="date" id="datePart" class="form-control" value="@Model.Deadline?.ToString("yyyy-MM-dd")" />
-                        <input type="time" id="timePart" class="form-control" value="@Model.Deadline?.ToString("HH:mm")" />
+                        <input type="date" id="deadlineDateInput" class="form-control" />
+                        <input type="time" id="deadlineTimeInput" class="form-control" />
                     </div>
                 </div>
                 <input type="hidden" id="Deadline" name="Deadline" />
@@ -63,7 +63,7 @@
             </div>
             <br />
             <div class="btn-group">
-                <input type="submit" value="Aufgabe erstellen" class="btn btn-success" />
+                <input type="submit" value="Aufgabe erstellen" class="btn btn-success" id="submitButton" />
                 <input type="reset" value="Zurücksetzen" class="btn btn-warning" />
             </div>
             <br />
@@ -75,6 +75,55 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const erledigtDate = document.getElementById('erledigtDateInput');
+        const erledigtTime = document.getElementById('erledigtTimeInput');
+
+        const deadlineDate = document.getElementById('deadlineDateInput');
+        const deadlineTime = document.getElementById('deadlineTimeInput');
+
+        const hiddenErledigt = document.getElementById('ErledigtDatum');
+        const hiddenDeadline = document.getElementById('Deadline');
+
+        document.getElementById("submitButton").addEventListener("click", function (e) {
+            const deadlineDateVal = deadlineDate.value; // "YYYY-MM-DD" oder ""
+            const deadlineTimeVal = deadlineTime.value; // "HH:mm" oder ""
+            const erledigtDateVal = erledigtDate.value;
+            const erledigtTimeVal = erledigtTime.value;
+
+            if (deadlineDateVal) {
+                // Wenn Datum da, aber Zeit leer -> nutze 00:00
+                const deadlineFinalTime = deadlineTimeVal ? deadlineTimeVal : "00:00";
+
+                // Format für datetime-local im Controller: YYYY-MM-DDTHH:mm
+                hiddenDeadline.value = deadlineDateVal + "T" + deadlineFinalTime;
+
+                alert("Deadline Gespeichert: " + hiddenDeadline.value);
+            } else {
+                // Feld ist komplett leer (Nullable)
+                hiddenDeadline.value = "";
+                alert("Deadline ist leer (NULL)");
+            }
+
+            if (erledigtDateVal) {
+                // Wenn Datum da, aber Zeit leer -> nutze 00:00
+                const erledigtFinalTime = erledigtTimeVal ? erledigtTimeVal : "00:00";
+
+                // Format für datetime-local im Controller: YYYY-MM-DDTHH:mm
+                hiddenErledigt.value = erledigtDateVal + "T" + erledigtFinalTime;
+
+                alert("ErledigtDatum Gespeichert: " + hiddenErledigt.value);
+            } else {
+                // Feld ist komplett leer (Nullable)
+                hiddenErledigt.value = "";
+                alert("Erledigt-Datum ist leer (NULL)");
+            }
+        });
+    });
+</script>
+
 @if (TempData["Message"] != null)
 {
     <div class="toast-container position-fixed top-50 start-50 translate-middle">

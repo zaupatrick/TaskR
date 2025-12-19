@@ -371,13 +371,7 @@ namespace TaskR.Controllers
                 task.ErstelltDatum = DateTime.Now;
 
                 task = _aufgabenService.MachErledigtOderUnerledigt(task);
-
-                //todo: geht nicht
-                //Uhrzeit auf 00:00 setzen, falls keine eintgetragen wird
-                //if (task.Deadline != null && task.Deadline.Value.TimeOfDay == TimeSpan.Zero)
-                //{
-                //    task.Deadline = task.Deadline.Value.Date;
-                //}
+                if (task.ErledigtDatum != null) task.Erledigt = true;
 
                 int userId;
                 //Check Anzahl max Tasks für User
