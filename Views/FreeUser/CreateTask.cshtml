@@ -20,12 +20,10 @@
                 <span asp-validation-for="Beschreibung" class="text-danger"></span>
             </div>
             <div class="form-group">
-                @* <label asp-for="TodoId" class="control-label"></label> *@
                 <input type="hidden" asp-for="TodoId" class="form-control" value="@ViewBag.TodoId"/>
                 <span asp-validation-for="TodoId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                @* <label asp-for="UserId" class="control-label"></label> *@
                 <input type="hidden" asp-for="UserId" class="form-control" value="@ViewBag.UserId"/>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
@@ -34,19 +32,28 @@
                     <input class="form-check-input" asp-for="Erledigt" /> @Html.DisplayNameFor(model => model.Erledigt)
                 </label>
             </div>
-@*             <div class="form-group">
-                <label asp-for="ErstelltDatum" class="control-label"></label>
-                <input asp-for="ErstelltDatum" class="form-control" value="@DateTime.Now.ToString()" placeholder="@DateTime.Now.ToString()"/>
-                <span asp-validation-for="ErstelltDatum" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
-                <label asp-for="ErledigtDatum" class="control-label"></label>
-                <input asp-for="ErledigtDatum" class="form-control" />
+                <label asp-for="ErledigtDatum" class="control-label">(Erledigt am)</label>
+                <div class="input-group">
+                    <div style="display:flex; gap:5px">
+                        <input type="date" id="erlDat" class="form-control" value="@Model.ErledigtDatum?.ToString("yyyy-MM-dd")" />
+                        <input type="time" id="erlTim" class="form-control" value="@Model.ErledigtDatum?.ToString("HH:mm")" />
+                    </div>
+                </div>
+                <input type="hidden" name="ErledigtDatum" id="ErledigtDatum" />
+                @* <input asp-for="ErledigtDatum" type="datetime-local" class="form-control" /> *@
                 <span asp-validation-for="ErledigtDatum" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Deadline" class="control-label"></label>
-                <input asp-for="Deadline" type="datetime" class="form-control" />
+                <label asp-for="Deadline" class="control-label">(Deadline)</label>
+                @* <input type="datetime-local" class="form-control" id="deadline" value="@Model.Deadline?.ToString("yyyy-MM-ddTHH:mm")" /> wichtig!!! datetime-local *@
+                <div class="input-group">
+                    <div style="display: flex; gap: 5px;">
+                        <input type="date" id="datePart" class="form-control" value="@Model.Deadline?.ToString("yyyy-MM-dd")" />
+                        <input type="time" id="timePart" class="form-control" value="@Model.Deadline?.ToString("HH:mm")" />
+                    </div>
+                </div>
+                <input type="hidden" id="Deadline" name="Deadline" />
                 <span asp-validation-for="Deadline" class="text-danger"></span>
             </div>
             <div class="form-group">

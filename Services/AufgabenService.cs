@@ -45,10 +45,10 @@ namespace TaskR.Services
                 task.Erledigt = false;
                 task.ErledigtDatum = DateTime.Now;
             }
-            else if (!task.Erledigt && task.ErledigtDatum != null)
-            {
-                task.ErledigtDatum = null;
-            }
+            //else if (!task.Erledigt && task.ErledigtDatum != null)
+            //{
+            //    task.ErledigtDatum = null;
+            //}
             return task;
         }
         public async Task MachTaskAndersAsync(Aufgabe task)

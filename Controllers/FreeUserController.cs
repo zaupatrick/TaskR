@@ -503,12 +503,6 @@ namespace TaskR.Controllers
         [HttpPost]
         public async Task<IActionResult> EditTask(Aufgabe task)
         {
-            var raw1 = HttpContext.Request.Form["Deadline"].ToString();
-            var raw2 = HttpContext.Request.Form["task.Deadline"].ToString();
-
-            Console.WriteLine("RAW1 = " + raw1);
-            Console.WriteLine("RAW2 = " + raw2);
-
             ArgumentNullException.ThrowIfNull(task);
 
             //Do or undo
