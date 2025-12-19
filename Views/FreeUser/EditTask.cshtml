@@ -175,11 +175,11 @@
                 // Format für datetime-local im Controller: YYYY-MM-DDTHH:mm
                 hiddenDeadline.value = deadlineDateVal + "T" + deadlineFinalTime;
 
-                alert("Deadline Gespeichert: " + hiddenDeadline.value);
+                //alert("Deadline Gespeichert: " + hiddenDeadline.value);
             } else {
                 // Feld ist komplett leer (Nullable)
                 hiddenDeadline.value = "";
-                alert("Deadline ist leer (NULL)");
+                //alert("Deadline ist leer (NULL)");
             }
 
             if (erledigtDateVal) {
@@ -189,11 +189,11 @@
                 // Format für datetime-local im Controller: YYYY-MM-DDTHH:mm
                 hiddenErledigt.value = erledigtDateVal + "T" + erledigtFinalTime;
 
-                alert("ErledigtDatum Gespeichert: " + hiddenErledigt.value);
+                //alert("ErledigtDatum Gespeichert: " + hiddenErledigt.value);
             } else {
                 // Feld ist komplett leer (Nullable)
                 hiddenErledigt.value = "";
-                alert("Erledigt-Datum ist leer (NULL)");
+                //alert("Erledigt-Datum ist leer (NULL)");
             }
         });
     });
