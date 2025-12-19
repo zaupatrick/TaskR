@@ -1,0 +1,201 @@
+﻿@model TaskR.Models.TodoDetailsVm
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = @Model.Todo.TodoName.ToString();
+}
+
+<h1>@ViewData["Title"]</h1>
+<div style="overflow:hidden">
+    <h5>Aufgaben der Todo-Liste</h5>
+    <a href="/FreeUser/Index" class="btn btn-primary">Zurück zur ToDo-Liste</a>
+
+    <div class="btn-group" style="float:inline-end">
+        <button class="btn btn-outline-dark toggle-comments" type="button" data-bs-toggle="collapse" data-bs-target="#renameIframe-@Model.Todo.TodoId" style="display:inline-block">
+            ToDo-Liste umbenennen
+        </button>
+        <form method="post" action="/FreeUser/DeleteTodo" style="display:inline-block">
+            <input type="hidden" name="todoId" value="@Model.Todo.TodoId" />
+            <button type="submit" class="btn btn-danger">
+                ToDo-Liste löschen
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="collapse mt-2" id="renameIframe-@Model.Todo.TodoId" style="float:inline-end">
+    <form method="post" action="/FreeUser/RenameTodo" style="float:inline-end">
+        <input type="hidden" name="todoId" value="@Model.Todo.TodoId" />
+        <input type="text" name="todoName" class="form-control" placeholder="Neuer Listenname" maxlength="30" style="width:250px" />
+        <button type="submit" class="btn btn-success">
+            Umbenennen
+            </button>
+        <button type="reset" class="btn btn-warning">
+            Zurücksetzen
+            </button>
+    </form>
+</div>
+<hr />
+
+<div style="overflow:hidden">
+    <a href="/FreeUser/CreateTask?todoId=@Model.Todo.TodoId" class="btn btn-success">Aufgabe erstellen</a>
+    <span>Sie können noch <span style="font-size:larger">@Model.NumberOfTasksLeft.ToString() </span> Aufgaben in dieser Liste erstellen. </span>
+
+    <button class="btn btn-outline-warning toggle-comments" type="button" data-bs-toggle="collapse" data-bs-target="#delDoneTasksIframe-@Model.Todo.TodoId" style="float:inline-end">
+        Erledigte Aufgaben löschen
+        </button>
+
+    <div class="collapse" id="delDoneTasksIframe-@Model.Todo.TodoId" style="float:inline-end">
+        <br />
+        <h5 style="text-align:end">Aufgaben von ToDo-Liste @ViewBag.todoName</h5>
+        <hr />
+        <ul>
+        @foreach(var a in Model.DoneTasks!)
+        {
+                <li>
+                    <a href="/FreeUser/TodoDetails?todoId=@a.TodoId" style="font-size:larger">@a.Beschreibung</a> vom @a.ErstelltDatum.ToString()
+                </li>
+        }
+        </ul>
+        <form method="post" action="/FreeUser/DeleteAllDoneTodoTasks" style="display:inline-block">
+            <input type="hidden" name="todoId" value="@Model.Todo.TodoId" />
+            <button type="submit" class="btn btn-danger">Alle erledigten löschen</button>
+        </form>
+    </div>
+</div>
+<br />
+<br />
+<table cellpadding="10" class="table table-hover">
+    @foreach (var t in Model.Todo.TaskGroup)
+    {
+        <tr>
+            <td>
+                <div style="overflow:hidden">
+                    @t.ErstelltDatum.ToString("g")
+                    @if (t.Erledigt)
+                    {
+                        <span style="color:green">ERLEDIGT</span>
+                        <form method="post" action="/FreeUser/DoOrUndoTask" style="display:inline-block">
+                            <input type="hidden" name="aufgabeId" value="@t.AufgabeId" />
+                            <button type="submit" class="btn btn-success">&#x2714;</button>
+                        </form>
+                        <a href="/FreeUser/EditTask?taskId=@t.AufgabeId.ToString()" style="font-size:larger; color:green" class="btn btn-outline-success">@t.Beschreibung</a>
+                        <span>am @t.ErledigtDatum.ToString()</span>
+                    } else
+                    {
+                        <form method="post" action="/FreeUser/IncreaseTaskPriority" style="display:inline-block">
+                            <input type="hidden" name="aufgabeId" value="@t.AufgabeId" />
+                            <button type="submit" class="btn btn-outline-dark">P @t.Priorität.ToString() +</button>
+                        </form>
+                        <form method="post" action="/FreeUser/DoOrUndoTask" style="display:inline-block">
+                            <input type="hidden" name="aufgabeId" value="@t.AufgabeId" />
+                            <button type="submit" class="btn btn-outline-success" style="color:green">&#x2714;</button>
+                        </form>
+
+                        @if(t.Deadline != null)
+                        {
+                            <a href="/FreeUser/EditTask?taskId=@t.AufgabeId.ToString()" style="font-size:larger" class="btn btn-outline-danger">@t.Beschreibung</a>
+                            @if(t.Deadline!.Value <= DateTime.Now.AddDays(7))
+                            {
+                                <span style="color:darkred">DRINGEND!</span>
+                            }
+                            @if(t.Deadline.Value < DateTime.Now)
+                            {
+                                <span style="color:darkred">bis @t.Deadline.ToString()</span>
+                            } else
+                            {
+                                <span>bis @t.Deadline.ToString()</span>
+                            }
+                        } else
+                        {
+                            <a href="/FreeUser/EditTask?taskId=@t.AufgabeId.ToString()" style="font-size:larger" class="btn btn-outline-light">@t.Beschreibung</a>
+                        }
+                    }
+                </div>
+            </td>
+            <td>
+                @foreach(var tag in t.Tags)
+                {
+                    @* <a href="/FreeUser/TagDetails" style="color:@tag.ColorCode">#@tag.TagName.ToString()</a> *@
+                    <a href="#editIframe-@tag.TagId" class="dropdown-toggle" style="color:@tag.ColorCode" data-bs-toggle="collapse" data-bs-target="#editIframe-@tag.TagId">#@tag.TagName.ToString()</a>
+
+                    <div class="collapse mt-2" id="editIframe-@tag.TagId">
+                        <h6>Tag bearbeiten</h6>
+                        <form method="post" action="/FreeUser/EditTag">
+                            <input type="hidden" name="tagId" value="@tag.TagId" />
+                            <input type="hidden" name="aufgabeId" value="@t.AufgabeId" />
+                            <input type="hidden" name="todoId" value="@Model.Todo.TodoId" />
+                            <input type="text" class="form-control" name="tagName" maxlength="10" placeholder="Tagname ohne #" value="@tag.TagName.ToString()"/>
+                            <input type="color" class="form-control-color" name="colorCode" value="@tag.ColorCode?.ToString()"/>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-outline-success">Hinzufügen</button>
+                                <button type="reset" class="btn btn-warning">Zurücksetzen</button>
+                            </div>
+                        </form>
+                        <form method="post" action="/FreeUser/DeleteTag?@tag.TagId">
+                            <input type="hidden" name="tagId" value="@tag.TagId" />
+                            <input type="hidden" name="todoId" value="@tag.Aufgabe.TodoId" />
+                            <button type="submit" class="btn btn-outline-danger">Löschen</button>
+                        </form>
+                        
+                    </div>
+                }
+
+                <!-- Button to show/hide the comment form -->
+                <button class="btn btn-outline-dark toggle-comments" type="button" data-bs-toggle="collapse" data-bs-target="#neuIframe-@t.AufgabeId" style="float:right">
+                    +
+                </button>
+                <!-- Collapsible comment form -->
+                <div class="collapse mt-2" id="neuIframe-@t.AufgabeId">
+                    <h6>Tag hinzufügen</h6>
+                    <form method="post" action="/FreeUser/CreateTag">
+                        <input type="hidden" name="aufgabeId" value="@t.AufgabeId" />
+                        <input type="hidden" name="todoId" value="@Model.Todo.TodoId" />
+                        <input type="text" class="form-control" name="tagName" maxlength="10" placeholder="Tagname ohne #" />
+                        <input type="color" class="form-control-color" name="colorCode" />
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-outline-success">Hinzufügen</button>
+                            <button type="reset" class="btn btn-warning">Zurücksetzen</button>
+                        </div>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+
+@* @if (TempData["Message"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function(){
+            alert('@TempData["Message"]')
+        }
+    </script>
+} *@
+
+@* Popup for 3 seconds *@
+@if (TempData["Message"] != null)
+{
+    <div class="toast-container position-fixed top-50 start-50 translate-middle">
+        <div id="msgToast" class="toast align-items-center text-bg-primary border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" style="color:maroon">
+                    @TempData["Message"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastEl = document.getElementById('msgToast');
+            var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        });
+    </script>
+}
+
+
+

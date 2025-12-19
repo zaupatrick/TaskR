@@ -1,0 +1,61 @@
+﻿@model TaskR.Data.AppUser
+@using TaskR.Enums
+
+@{
+    ViewData["Title"] = "Edit user";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h5>AppUser</h5>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+            <div class="form-group">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EMail" class="control-label"></label>
+                <input asp-for="EMail" class="form-control" />
+                <span asp-validation-for="EMail" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="UserRole" class="control-label"></label>
+@*                 <input asp-for="UserRole" class="form-control" /> *@
+                <select asp-for="UserRole" asp-items="Html.GetEnumSelectList<UserRole>()" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="UserRole" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastLogon" class="control-label"></label>
+                <input asp-for="LastLogon" class="form-control" disabled/>
+                <span asp-validation-for="LastLogon" class="text-danger"></span>
+            </div>
+            <div class="btn-group">
+                <input type="submit" value="Save user changes" class="btn btn-success" />
+                <a asp-action="BenutzerBrett" class="btn btn-primary">Back to Benutzerbrett</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@if (TempData["Message"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function(){
+            alert('@TempData["Message"]')
+        }
+    </script>
+}

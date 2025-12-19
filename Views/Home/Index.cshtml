@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome on TaskR</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<br /><br /><br /><br />
+@if (!User.Identity!.IsAuthenticated)
+{
+    <table style="margin:0px auto">
+        <tr>
+            <td><a href="/Auth/Logon" class="btn btn-outline-success" style="font-size:xx-large">Login</a></td>
+            <td><a href="/Auth/Register" class="btn btn-outline-primary" style="font-size:xx-large">Registrieren</a></td>
+        </tr>
+    </table>
+} else
+{
+    <table style="margin:0px auto">
+        <tr>
+            <td><a href="/FreeUser/Index" class="btn btn-link" style="font-size:xx-large">TaskRR</a></td>
+            <td><a href="/Auth/Logout" class="btn btn-outline-success" style="font-size:xx-large">Logout</a></td>
+        </tr>
+    </table>
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="toast-container position-fixed top-50 start-50 translate-middle">
+        <div id="msgToast" class="toast align-items-center text-bg-primary border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" style="color:maroon">
+                    @TempData["Message"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastEl = document.getElementById('msgToast');
+            var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        });
+    </script>
+}

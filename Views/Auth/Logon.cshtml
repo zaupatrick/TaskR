@@ -1,0 +1,53 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Login";
+}
+<h1>@ViewData["Title"]</h1>
+<h5>Benutzer</h5>
+<hr />
+<a href="/Auth/Register" class="btn btn-primary" style="font-size:larger">Registrieren</a>
+<br />
+<br />
+
+<div class="row">
+    <div class="col-md-4">
+    <form action="/Auth/Logon" method="post">
+        @* <input type="text" class="form-control" name="username" placeholder="Login eingeben" /> *@
+        <input type="email" class="form-control" name="email" placeholder="E-Mail-Adresse eingeben" />
+        <input type="password" class="form-control" name="passwort" placeholder="Passwort eingeben" />
+        <br />
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success" style="font-size:larger">Login</button>
+            <button type="reset" class="btn btn-warning" style="font-size:larger">Zurücksetzen</button>
+        </div>
+        @* @if (TempData["Message"] != null)
+        {
+            <br />
+            <p style="color:red"><b>@TempData["Message"]!.ToString()</b></p>
+        } *@
+    </form>
+    </div>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="toast-container position-fixed top-50 start-50 translate-middle">
+        <div id="msgToast" class="toast align-items-center text-bg-primary border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" style="color:maroon">
+                    @TempData["Message"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastEl = document.getElementById('msgToast');
+            var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        });
+    </script>
+}

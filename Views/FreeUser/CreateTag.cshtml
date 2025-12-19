@@ -1,0 +1,17 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Tag hinzufügen";
+}
+<h6>@ViewData["Title"]</h6>
+<form method="post" action="/FreeUser/CreateTag">
+    <input type="hidden" name="aufgabeId" value="@Model" />
+    <input type="text" class="form-control" name="tagName" maxlength="50" placeholder="Tagname ohne #" />
+    <input type="color" class="form-control-color" name="colorCode" />
+    <div class="btn-group">
+        <button type="submit" class="btn btn-outline-success">Hinzufügen</button>
+        <button type="reset" class="btn btn-warning">Zurücksetzen</button>
+    </div>
+    <a href="/FreeUser/TodoDetails">Zurück zur ToDo-Liste</a>
+</form>

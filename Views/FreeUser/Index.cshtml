@@ -1,0 +1,155 @@
+﻿@model FreeUserIndexVm
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    TempData["Title"] = $"Willkommen {User.Identity?.Name}";
+    ViewData["Title"] = "Index";
+}
+<h1>@TempData["Title"]</h1>
+<span>
+    <span style="float:right"> Sie können noch <span style="font-size:larger">@Model.NumberTodosLeft.ToString()</span> ToDo-Listen anlegen. </span>
+    @if (User.IsInRole("FreeTier"))
+    {
+        <span style="float:inline-end; font-size:larger"><i>freeUser. &nbsp;</i></span>
+    }
+    @if (User.IsInRole("PremiumTier"))
+    {
+        <span style="float:inline-end; font-size:larger"> <i>PremiumUser. &nbsp;</i> </span>
+    }
+</span>
+<hr />
+<button class="btn btn-outline-success toggle-comments" type="button" data-bs-toggle="collapse" data-bs-target="#newTodoIframe" style="float:left">
+    Neue ToDo-Liste
+</button>
+<div class="collapse mt-2" id="newTodoIframe" style="float:left">
+    <form method="post" action="/FreeUser/CreateTodo">
+        <input type="text" name="todoName" class="form-control" placeholder="Neuer Listenname" maxlength="30" style="width:250px" />
+        <button type="submit" class="btn btn-success">ToDo-Liste anlegen</button>
+        <button type="reset" class="btn btn-warning">Zurücksetzen</button>
+    </form>
+</div>
+<br />
+@* <br /> *@
+<button class="btn btn-outline-dark toggle-comments" type="button" data-bs-toggle="collapse" data-bs-target="#searchIframe" style="float:right">
+    Filtern
+</button>
+<div class="collapse mt-2" id="searchIframe" style="float:right">
+    <form method="post" action="/FreeUser/Index">
+        <div>
+            <input type="text" class="form-control" name="searchTaskQuery" placeholder="Aufgaben suchen" maxlength="100" style="width:250px">
+            <input type="text" class="form-control" name="searchTodoQuery" placeholder="In Listennamen suchen" maxlength="30" style="width:250px" />
+            <input type="radio" name="FilterRadio" value="AllDone" /> Erledigt
+            <input type="radio" name="FilterRadio" value="AllUndone" /> Unerledigt
+            <input type="radio" name="FilterRadio" value="Urgent" /> Dringend
+        </div>
+        <div>
+            <button type="submit" class="btn btn-secondary">Filtern</button>
+            <button type="reset" class="btn btn-danger">Zurücksetzen</button>
+        </div>
+    </form>
+</div>
+<br />
+<br />
+<div>
+    <table class="table table-hover">
+        @foreach(var t in Model.Todos!)
+        {
+            <tr>
+                <td width="20px">
+                    <form method="post" action="/FreeUser/DeleteTodo">
+                        <input type="hidden" name="todoId" value="@t.TodoId" />
+                        <button type="submit" class="btn btn-outline-danger">-</button>
+                    </form>
+                </td>
+                <td>
+                    <a href="/FreeUser/TodoDetails?todoId=@t.TodoId.ToString()" style="font-size:larger" class="btn btn-outline-light"> @t.TodoName</a>
+                    <p>
+                        (@t.TaskGroup.Where(tg => tg.TodoId == t.TodoId).Count().ToString() Aufgaben / @t.TaskGroup.Where(tg => tg.TodoId == t.TodoId && tg.Erledigt).Count().ToString() erledigt, @t.TaskGroup.Where(tg => tg.TodoId == t.TodoId && !tg.Erledigt).Count().ToString() offen)
+                    </p>
+                </td>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td>
+                    @if (t.TaskGroup.Any())
+                    {
+                        <table>
+                            @foreach(var ta in t.TaskGroup)
+                            {
+                                <tr>
+                                    <td>
+                                        @if(ta.Erledigt) 
+                                        {
+                                            <span style="color:green">ERLEDIGT</span>
+                                            <span> am @ta.ErledigtDatum</span>
+                                        }
+                                        else if (ta.Deadline < DateTime.Now)
+                                        {
+                                            <span style="color:darkred">DRINGEND</span>
+                                            <span style="color:darkred">bis @ta.Deadline.ToString()</span>
+                                        } else if (ta.Deadline <= DateTime.Now.AddDays(7))
+                                        {
+                                            <span style="color:darkred">DRINGEND</span>
+                                            <span>bis @ta.Deadline.ToString()</span>
+                                        }
+                                        
+                                        <a href="/FreeUser/EditTask?TaskId=@ta.AufgabeId.ToString()"> @ta.Beschreibung</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="2"><h6>Aufgaben</h6>Gesamt: @Model.AnzAllTasks.ToString()  </td> 
+            <td></td> 
+            <td></td> 
+            <td><h6>Tags</h6> @Model.Tags!.Count().ToString() / 20 verwendet</td>
+        </tr>
+        <tr><td colspan="2">Erledigt: @Model.AnzTasksDone.ToString()  Offen: @Model.AnzTasksOpen.ToString()</td>
+            <td></td>
+            <td></td>
+            <td>@foreach (var t in Model.Tags!)
+                {
+                    if (t.Aufgabe != null)
+                    {
+                        <a href="/FreeUser/TodoDetails?todoId=@t.Aufgabe.TodoId" style="color:@t.ColorCode?.ToString()">#@t.TagName</a>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="toast-container position-fixed top-50 start-50 translate-middle">
+        <div id="msgToast" class="toast align-items-center text-bg-primary border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" style="color:maroon">
+                    @TempData["Message"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastEl = document.getElementById('msgToast');
+            var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        });
+    </script>
+}

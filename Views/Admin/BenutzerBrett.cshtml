@@ -1,0 +1,180 @@
+﻿@model BenutzerBrettVm;
+
+@{
+    ViewData["Title"] = "Benutzer Panel";
+}
+
+<h1>@TempData["Title"]</h1>
+
+<p>
+    <a asp-action="Register" asp-controller="Auth" class="btn btn-primary">Create New</a>
+</p>
+<table class="table table-hover">
+    <thead style="color:white">
+        <tr>
+            <th>
+                Username
+            </th>
+            <th>
+                E-Mail
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Last Logon
+            </th>
+            <th>
+                Registered on
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="color:white"><h5>Admins</h5></td>
+        </tr>
+        @foreach (var item in Model.Admins)
+        {
+            <tr>
+                <td style="color:darkred">
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EMail)
+                </td>
+                <td style="color:darkred">
+                    @Html.DisplayFor(modelItem => item.UserRole)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastLogon)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelIdem => item.RegisteredOn)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+        
+        @if (Model.PremiumUsers != null)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="color:white"><h5>PremiumUsers</h5></td>
+            </tr>
+            @foreach (var item in Model.PremiumUsers) 
+            {
+                    <tr>
+                        <td>
+                        @Html.DisplayFor(modelItem => item.Username) 
+                        <p>@item.TodoList?.Count().ToString() Todo-Lists </p>
+                    </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EMail)
+                        <p>@{
+                                int taskCount = 0;
+                                int tagCount = 0;
+                                foreach(var t in item.TodoList!)
+                                {
+                                    taskCount += t.TaskGroup.Count();
+                                    foreach(var task in t.TaskGroup)
+                                    {
+                                        tagCount += task.Tags.Count();
+                                    }
+                                }
+                            }
+                            @taskCount Aufgaben
+                            @tagCount Tags
+                        </p>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserRole)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastLogon)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RegisteredOn)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+            }
+        }
+        @if (Model.FreeUsers != null)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="color:white"><h5>FreeUsers</h5></td>
+            </tr>
+            @foreach (var item in Model.FreeUsers)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                        <p>@item.TodoList?.Count().ToString() Todo-Lists </p>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EMail)
+                        <p>
+                            @{
+                                int taskCount = 0;
+                                int tagCount = 0;
+                                foreach (var t in item.TodoList!)
+                                {
+                                    taskCount += t.TaskGroup.Count();
+                                    foreach (var task in t.TaskGroup)
+                                    {
+                                        tagCount += task.Tags.Count();
+                                    }
+                                }
+                            }
+                            @taskCount Aufgaben
+                            @tagCount Tags
+                        </p>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserRole)
+                    </td>    
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastLogon)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RegisteredOn)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (TempData["Message"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function(){
+            alert('@TempData["Message"]')
+        }
+    </script>
+}
