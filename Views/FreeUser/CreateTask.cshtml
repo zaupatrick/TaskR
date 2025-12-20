@@ -15,18 +15,19 @@
         <form asp-action="CreateTask">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <input type="hidden" asp-for="TodoId" class="form-control" value="@ViewBag.TodoId" />
+                <span asp-validation-for="TodoId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="UserId" class="form-control" value="@ViewBag.UserId" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Beschreibung" class="control-label" style="width:500px"></label>
                 <input asp-for="Beschreibung" class="form-control" />
                 <span asp-validation-for="Beschreibung" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="hidden" asp-for="TodoId" class="form-control" value="@ViewBag.TodoId"/>
-                <span asp-validation-for="TodoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="hidden" asp-for="UserId" class="form-control" value="@ViewBag.UserId"/>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
+
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Erledigt" /> @Html.DisplayNameFor(model => model.Erledigt)
