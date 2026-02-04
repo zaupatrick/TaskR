@@ -292,6 +292,7 @@ namespace TaskR.Controllers
                 return RedirectToAction("TodoDetails", new { todoId });
             }
 
+            todo.TodoName = todoName;
             await _todoService.MachTodoAndersAsync(todo);
             TempData["Message"] += "ToDo-Liste wurde umbenannt. ";
 
